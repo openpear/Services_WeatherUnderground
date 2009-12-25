@@ -5,6 +5,7 @@
  */
 require_once('../WeatherUnderground.php');
 $wg = new Services_WeatherUnderground('Osaka');
+print_r($wg->getWeatherData());
 
 /*
 foreach($wg->weather as $key => $val){
@@ -12,9 +13,4 @@ foreach($wg->weather as $key => $val){
 };
 */
 
-echo $wg->getTemperature(),"<br>";
-echo $wg->getPressure(),"<br>";
-echo $wg->getWindDir(),"<br>";
-echo $wg->getWindMph(),"<br>";
-echo $wg->getWindstring(),"<br>";
 ?>
