@@ -1,8 +1,19 @@
 <?php
-define('WG_API_GEO', 'http://api.wunderground.com/auto/wui/geo/GeoLookupXML/index.xml');
+/**
+ *  Services_WeatherUnderground 0.0.1
+ *
+ *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
+ *  @package	Services_WeatherUnderground
+ *  @version	Services_WeatherUnderground v 0.0.1 2009/12/30
+ *
+ */
 define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
 
-class Services_WeatherUnderground{
+interface WeatherUnderground{
+    public function getWeatherData();
+}
+
+class Services_WeatherUnderground implements WeatherUnderground {
 
 	public $weather = null;
 
@@ -31,6 +42,12 @@ class Services_WeatherUnderground{
                 return $response['body'];
 	}
 
+	/**
+	 * XMLを配列に変換する
+	 *
+	 * @param XML $data
+	 * @return Array
+	 */
 	private final function toArray($data){
 	    require_once 'XML/Unserializer.php';
 	    $xml = new XML_Unserializer();
@@ -46,7 +63,11 @@ class Services_WeatherUnderground{
 	private final function makeUrl($query){
 		return sprintf('%s?query=%s', WG_API_AP, $query);
 	}
-	
+
+	/**
+	 * 天気情報を取得する
+	 * @return Array
+	 */
 	public function getWeatherData(){
 	    return $this->weather;
 	}
