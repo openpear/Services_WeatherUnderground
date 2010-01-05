@@ -7,7 +7,12 @@
  *  @version	Services_WeatherUnderground v 0.0.1 2009/12/30
  *
  */
+
+//API URL
 define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
+
+//エラーコード
+define('NOT_FOUND', 0x01);
 
 interface WeatherUnderground{
     public function getWeatherData();
@@ -69,6 +74,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return Array
 	 */
 	public function getWeatherData(){
+	    if(!$this->weather['station_id']){
+		return NOT_FOUND;
+	    }
 	    return $this->weather;
 	}
 }
