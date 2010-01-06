@@ -12,7 +12,7 @@
 define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
 
 //エラーコード
-define('NOT_FOUND', 0x01);
+define('CITY_NOT_FOUND', 0x01);
 
 interface WeatherUnderground{
     public function getWeatherData();
@@ -75,7 +75,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	public function getWeatherData(){
 	    if(!$this->weather['station_id']){
-		return NOT_FOUND;
+		return CITY_NOT_FOUND;
 	    }
 	    return $this->weather;
 	}

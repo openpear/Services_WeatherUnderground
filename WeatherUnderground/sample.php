@@ -5,7 +5,7 @@
  */
 require_once('../WeatherUnderground.php');
 $wg = new Services_WeatherUnderground('Osaka');
-if($wg->getWeatherData() === 0x01){
+if($wg->getWeatherData() === CITY_NOT_FOUND){
     echo sprintf('指定された観測地は見つかりませんでした「Error Code 0x%02X」', $wg->getWeatherData());
 }else{
     print_r($wg->getWeatherData());
