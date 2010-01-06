@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.0.1 2009/12/30
+ *  @version	Services_WeatherUnderground v 0.0.1 2009/01/06
  *
  */
 
