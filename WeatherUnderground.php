@@ -99,6 +99,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		case 'WNW':
 		    $win_dir = '西北西';
 		    break;
+		case 'W':
+		    $win_dir = '西';
+		    break;
 		case 'N':
 		    $win_dir = '北';
 		    break;
