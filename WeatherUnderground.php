@@ -82,6 +82,77 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	}
 
 	/**
+	 * 風向を日本語に変換
+	 *
+	 * @param String $winddir
+	 * @return String
+	 */
+	protected function getWindDir($winddir){
+	    switch($winddir){
+		case 'NNW':
+		    $wind_dir = '北北西';
+		    break;
+		case 'NW':
+		    $wind_dir = '北西';
+		    break;
+		case 'WNW':
+		    $wind_dir = '西北西';
+		    break;
+		case 'W':
+		    $wind_dir = '西';
+		    break;
+		case 'N':
+		    $wind_dir = '北';
+		    break;
+		case 'E':
+		    $wind_dir = '東';
+		    break;
+		case 'NE':
+		    $wind_dir = '北東';
+		    break;
+		case 'NNE':
+		    $wind_dir = '北北東';
+		    break;
+		case 'ENE':
+		    $wind_dir = '東北東';
+		    break;
+		case 'S':
+		    $wind_dir = '南';
+		    break;
+		case 'SE':
+		    $wind_dir = '南東';
+		    break;
+		case 'SSE':
+		    $wind_dir = '南南東';
+		    break;
+		case 'ESE':
+		    $wind_dir = '東南東';
+		    break;
+		case 'WSW':
+		    $wind_dir = '西南西';
+		    break;
+		case 'SSW':
+		    $wind_dir = '南南西';
+		    break;
+		case 'SW':
+		    $wind_dir = '南西';
+		    break;
+	    }
+	    return $wind_dir;
+	}
+
+	/**
+	 * 風速変換を行います
+	 *
+	 * @param int $mph Mile Per Hour
+	 * @return int Metor
+	 */
+	protected convertMphMetor($mph){
+	    $wind_mph = $mph * 0.1;
+	    return ((int) (($wind_mph - $mph) / 2));
+	}
+
+	/**
 	 * わかりやすい形で天気情報を取得する
 	 * @return Array
 	 */
@@ -89,60 +160,13 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    if(!$this->weather['station_id']){
 		return CITY_NOT_FOUND;
 	    }
-	    switch($this->weather['wind_dir']){
-		case 'NNW':
-		    $win_dir = '北北西';
-		    break;
-		case 'NW':
-		    $win_dir = '北西';
-		    break;
-		case 'WNW':
-		    $win_dir = '西北西';
-		    break;
-		case 'W':
-		    $win_dir = '西';
-		    break;
-		case 'N':
-		    $win_dir = '北';
-		    break;
-		case 'E':
-		    $win_dir = '東';
-		    break;
-		case 'NE':
-		    $win_dir = '北東';
-		    break;
-		case 'NNE':
-		    $win_dir = '北北東';
-		    break;
-		case 'ENE':
-		    $win_dir = '東北東';
-		    break;
-		case 'S':
-		    $win_dir = '南';
-		    break;
-		case 'SE':
-		    $win_dir = '南東';
-		    break;
-		case 'SSE':
-		    $win_dir = '南南東';
-		    break;
-		case 'ESE':
-		    $win_dir = '東南東';
-		    break;
-		case 'WSW':
-		    $win_dir = '西南西';
-		    break;
-		case 'SSW':
-		    $win_dir = '南南西';
-		    break;
-		case 'SW':
-		    $win_dir = '南西';
-		    break;
-	    }
+
+	    $wind_dir = $this->getWindDir($this->weather['wind_dir']);
 
 	    //風速変換
-	    $mph = $this->weather['wind_mph'] / 2 *1000 / 60 / 60;
-	    $mph = (int) $mph;
+	    $mph = $this->convertMphMetor($this->weather['wind_mph']);
+//	    $mph = $this->weather['wind_mph'] * 0.1;
+//	    $mph = ((int) (($this->weather['wind_mph'] - $mph) / 2));
 
 	    $weather = array(
 		//街
@@ -160,7 +184,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		//湿度
 		'humidity' => $this->weather['relative_humidity'],
 		//風向
-		'wind_dir' => $win_dir,
+		'wind_dir' => $wind_dir,
 		//風速
 		'wind_speed' => $mph . 'm/s',
 		//気圧
