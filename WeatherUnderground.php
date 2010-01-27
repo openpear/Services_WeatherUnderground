@@ -147,7 +147,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @param int $mph Mile Per Hour
 	 * @return int Metor
 	 */
-	protected convertMphMetor($mph){
+	protected function convertMphMetor($mph){
 	    $wind_mph = $mph * 0.1;
 	    return ((int) (($wind_mph - $mph) / 2));
 	}
@@ -161,12 +161,11 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		return CITY_NOT_FOUND;
 	    }
 
+	    //風向情報の取得
 	    $wind_dir = $this->getWindDir($this->weather['wind_dir']);
 
 	    //風速変換
 	    $mph = $this->convertMphMetor($this->weather['wind_mph']);
-//	    $mph = $this->weather['wind_mph'] * 0.1;
-//	    $mph = ((int) (($this->weather['wind_mph'] - $mph) / 2));
 
 	    $weather = array(
 		//街
