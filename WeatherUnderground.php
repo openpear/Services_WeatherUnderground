@@ -101,10 +101,19 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		case 'W':
 		    $wind_dir = '西';
 		    break;
+		case 'West':
+		    $wind_dir = '西';
+		    break;
 		case 'N':
 		    $wind_dir = '北';
 		    break;
+		case 'North':
+		    $wind_dir = '北';
+		    break;
 		case 'E':
+		    $wind_dir = '東';
+		    break;
+		case 'East':
 		    $wind_dir = '東';
 		    break;
 		case 'NE':
@@ -117,6 +126,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		    $wind_dir = '東北東';
 		    break;
 		case 'S':
+		    $wind_dir = '南';
+		    break;
+		case 'South':
 		    $wind_dir = '南';
 		    break;
 		case 'SE':
