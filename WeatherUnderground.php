@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.1.0 2009/01/21
+ *  @version	Services_WeatherUnderground v 0.1.0 2009/01/28
  *
  */
 
@@ -147,9 +147,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @param int $mph Mile Per Hour
 	 * @return int Metor
 	 */
-	protected function convertMphMetor($mph){
-	    $wind_mph = $mph * 0.1;
-	    return ((int) (($wind_mph - $mph) / 2));
+	protected function convertMphToMetor($mph){
+	    $mph_wind = round($mph * 0.1, 2);
+	    return (int) ($mph - $mph_wind / 2);
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    $wind_dir = $this->getWindDir($this->weather['wind_dir']);
 
 	    //風速変換
-	    $mph = $this->convertMphMetor($this->weather['wind_mph']);
+	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
 
 	    $weather = array(
 		//街
