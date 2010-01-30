@@ -40,6 +40,22 @@ $weather = $wg->getWeatherData();
     </tr>
     <tr>
 	<td>
+	    観測地
+	</td>
+	<td>
+	    <?php echo $weather['observation_location'] ?>
+	</td>
+    </tr>
+    <tr>
+	<td>
+	    観測時間
+	</td>
+	<td>
+	    <?php echo $weather['observation_time'] ?>
+	</td>
+    </tr>
+    <tr>
+	<td>
 	    天気
 	</td>
 	<td>
