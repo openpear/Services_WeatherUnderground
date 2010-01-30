@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.1.0 2009/01/28
+ *  @version	Services_WeatherUnderground v 0.1.0 2009/01/30
  *
  */
 
@@ -149,6 +149,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		case 'SW':
 		    $wind_dir = '南西';
 		    break;
+		case 'Variable':
+		    $wind_dir = 'N/A';
+		    break;
 	    }
 	    return $wind_dir;
 	}
@@ -188,6 +191,8 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		'image' => $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'],
 		//観測地
 		'observation_location' => $this->weather['observation_location']['city'],
+		//観測時間
+		'observation_time' => date("Y年m月d日 H時i分",strtotime(preg_replace("/Last Updated on |JST/", "", $this->weather['observation_time']))),
 		//天気
 		//'weather' => $this->weather['weather'],
 		//気温
