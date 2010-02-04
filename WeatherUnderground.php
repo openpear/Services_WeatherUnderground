@@ -1,10 +1,10 @@
 <?php
 /**
- *  Services_WeatherUnderground 0.1.0
+ *  Services_WeatherUnderground 0.2.0
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.1.0 2009/01/30
+ *  @version	Services_WeatherUnderground v 0.2.0 2009/02/04
  *
  */
 
@@ -26,8 +26,8 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	/**
 	 *コンストラクタ
 	 *
-	 * @param $query string 今のところは
-	 * プロパティに代入
+	 * @param $query string
+	 * 今のところはプロパティに代入
 	 */
 	public function __construct($query){
 		$data = $this->getWeather($query);
@@ -40,12 +40,26 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return XML
 	 */
 	private final function getWeather($query){
-		require_once 'HTTP/Client.php';
-		$client = new HTTP_Client();
-		$client->get($this->makeUrl($query));
-                $response = $client->currentResponse();
-                $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-                return $response['body'];
+		require_once('Cache/Lite.php');
+		if(!is_dir('tmp')) mkdir('tmp');
+		$options = array(
+		    'cacheDir' => '/tmp/',
+		    'lifeTime' => 3600
+		);
+		$id = sprintf('%s_%s', $query, date('H', time() - 3600));
+		$Cache_Lite = new Cache_Lite($options);
+		//もしキャッシュがあるんなら
+		if ($Cache_Lite->get($id)) {
+		    return $Cache_Lite->get($id);
+		}else{
+		    require_once 'HTTP/Client.php';
+		    $client = new HTTP_Client();
+		    $client->get($this->makeUrl($query));
+		    $response = $client->currentResponse();
+		    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
+		    $Cache_Lite->save($response['body']);
+		    return $response['body'];
+		}
 	}
 
 	/**
