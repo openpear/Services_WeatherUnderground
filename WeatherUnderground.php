@@ -1,10 +1,10 @@
 <?php
 /**
- *  Services_WeatherUnderground 0.1.0
+ *  Services_WeatherUnderground 0.1.1
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.1.0 2009/01/30
+ *  @version	Services_WeatherUnderground v 0.1.1 2009/02/06
  *
  */
 
