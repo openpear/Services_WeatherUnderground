@@ -10,6 +10,7 @@
 
 //API URL
 define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
+define('MPH_MS', 0.44704);
 
 //エラーコード
 define('CITY_NOT_FOUND', 0x01);
@@ -177,8 +178,8 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    $mph_wind = round($mph * 0.1, 2);
-	    return (int) ($mph - $mph_wind / 2);
+	    $mph = (int) round($mph * MPH_MS, 2);
+	    return $mph;
 	}
 
 	/**
