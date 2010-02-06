@@ -164,7 +164,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    $mph = round($mph * MPH_MS, 2);
+	    $mph = (int) round($mph * MPH_MS, 2);
 	    return $mph;
 	}
 
