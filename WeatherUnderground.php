@@ -44,7 +44,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		require_once('Cache/Lite.php');
 		if(!is_dir('tmp')) mkdir('tmp');
 		$options = array(
-		    'cacheDir' => '/tmp/',
+		    'cacheDir' => 'tmp/',
 		    'lifeTime' => 3600
 		);
 		$id = sprintf('%s_%s', $query, date('H', time() - 3600));
@@ -58,7 +58,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		    $client->get($this->makeUrl($query));
 		    $response = $client->currentResponse();
 		    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-		    $Cache_Lite->save($response['body']);
+		    $r = $Cache_Lite->save($response['body'], $id);
 		    return $response['body'];
 		}
 	}
