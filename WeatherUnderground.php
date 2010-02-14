@@ -42,7 +42,6 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	private function getWeather($query){
 	    $id = sprintf('%s_%s', $query, date('Hi', time() - 1800));
-	    $this->cacheRemove($id);
 	    if($this->cacheGet($id)){
 		return $this->cacheGet($id);
 	    }
