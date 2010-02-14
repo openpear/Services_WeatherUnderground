@@ -95,7 +95,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return 失敗:FALSE
 	 */
 	private function cacheSet($data, $id){
-	    if(!is_dir('tmp')) mkdir('tmp'); chmod(0777, 'tmp');
+	    if(!is_dir('tmp')) { mkdir('tmp'); chmod(0777, 'tmp'); }
 	    $options = array(
 		'cacheDir' => 'tmp/',
 		'lifeTime' => 1800
