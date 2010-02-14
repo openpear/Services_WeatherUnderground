@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.2.0 2009/02/04
+ *  @version	Services_WeatherUnderground v 0.2.0 2009/02/14
  *
  */
 
@@ -40,27 +40,72 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @param $query string 今のところは
 	 * @return XML
 	 */
-	private final function getWeather($query){
-		require_once('Cache/Lite.php');
-		if(!is_dir('tmp')) mkdir('tmp');
-		$options = array(
-		    'cacheDir' => 'tmp/',
-		    'lifeTime' => 3600
-		);
-		$id = sprintf('%s_%s', $query, date('H', time() - 3600));
-		$Cache_Lite = new Cache_Lite($options);
-		//もしキャッシュがあるんなら
-		if ($Cache_Lite->get($id)) {
-		    return $Cache_Lite->get($id);
-		}else{
-		    require_once 'HTTP/Client.php';
-		    $client = new HTTP_Client();
-		    $client->get($this->makeUrl($query));
-		    $response = $client->currentResponse();
-		    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-		    $r = $Cache_Lite->save($response['body'], $id);
-		    return $response['body'];
-		}
+	private function getWeather($query){
+	    $id = sprintf('%s_%s', $query, date('Hi', time() - 1800));
+	    $this->cacheRemove($id);
+	    if($this->cacheGet($id)){
+		return $this->cacheGet($id);
+	    }
+	    require_once 'HTTP/Client.php';
+	    $client = new HTTP_Client();
+	    $client->get($this->makeUrl($query));
+	    $response = $client->currentResponse();
+	    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
+	    $r = $this->cacheSet($response['body'], $id);
+	    return $response['body'];
+	}
+
+	/**
+	 *
+	 * 指定されたキャッシュがあるかチェックする
+	 *
+	 * @param Object $Cache_Lite
+	 * @param String $id
+	 * @return 成功:キャッシュデータ 失敗:FALSE
+	 */
+	private function cacheCheck($Cache_Lite, $id){
+	    if(!is_dir('tmp')) mkdir('tmp');
+	    if (!$Cache_Lite->get($id)) {
+		return false;
+	    }
+	    return $Cache_Lite->get($id);
+	}
+
+	/**
+	 *
+	 * キャッシュを取得する
+	 *
+	 * @param String $id
+	 * @return 成功:キャッシュデータ 失敗:FALSE
+	 */
+	private function cacheGet($id){
+	    require_once('Cache/Lite.php');
+	    $Cache_Lite = new Cache_Lite();
+	    if(!$this->cacheCheck($Cache_Lite, $id)){
+		return false;
+	    }
+	    return $Cache_Lite->get($id);
+	}
+
+	/**
+	 *
+	 * キャッシュを作る
+	 *
+	 * @param 天気データ $data
+	 * @param String $id
+	 * @return 失敗:FALSE
+	 */
+	private function cacheSet($data, $id){
+	    if(!is_dir('tmp')) mkdir('tmp'); chmod(0777, 'tmp');
+	    $options = array(
+		'cacheDir' => 'tmp/',
+		'lifeTime' => 1800
+	    );
+	    $Cache_Lite = new Cache_Lite($options);
+	    if(!$this->cacheCheck($Cache_Lite, $id)){
+		$r = $Cache_Lite->save($data, $id);
+	    }
+	    return true;
 	}
 
 	/**
@@ -69,7 +114,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @param XML $data
 	 * @return Array
 	 */
-	private final function toArray($data){
+	private function toArray($data){
 	    require_once 'XML/Unserializer.php';
 	    $xml = new XML_Unserializer();
 	    $xml->setOption('parseAttributes',true);
@@ -81,7 +126,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * WeatherUndergroundb API REST URLの生成
 	 * @return string
 	 */
-	private final function makeUrl($query){
+	private function makeUrl($query){
 		return sprintf('%s?query=%s', WG_API_AP, $query);
 	}
 
