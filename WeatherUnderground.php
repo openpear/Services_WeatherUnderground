@@ -1,16 +1,21 @@
 <?php
 /**
- *  Services_WeatherUnderground 0.2.0
+ *  Services_WeatherUnderground 0.1.5
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.2.0 2009/02/14
+ *  @version	Services_WeatherUnderground v 0.1.5 2009/03/01
  *
  */
 
 //API URL
 define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
+
+//各種設定
 define('MPH_MS', 0.44704);
+define('CACHE_DIR', 'tmp/');
+define('CACHE_BASE_DIR', dirname(__FILE__) . '/WeatherUnderground/' . CACHE_DIR);
+define('LIFE_TIME', 1800);
 
 //エラーコード
 define('CITY_NOT_FOUND', 0x01);
@@ -31,6 +36,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * 今のところはプロパティに代入
 	 */
 	public function __construct($query){
+		$this->cacheRemove();
 		$data = $this->getWeather($query);
 		$this->weather = $this->toArray($data);
 	}
@@ -41,7 +47,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return XML
 	 */
 	private function getWeather($query){
-	    $id = sprintf('%s_%s', $query, date('Hi', time() - 1800));
+	    $id = sprintf('%s', $query);
 	    if($this->cacheGet($id)){
 		return $this->cacheGet($id);
 	    }
@@ -79,7 +85,11 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	private function cacheGet($id){
 	    require_once('Cache/Lite.php');
-	    $Cache_Lite = new Cache_Lite();
+	    $options = array(
+		'cacheDir' => CACHE_DIR,
+		'lifeTime' => LIFE_TIME
+	    );
+	    $Cache_Lite = new Cache_Lite($options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		return false;
 	    }
@@ -97,14 +107,27 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	private function cacheSet($data, $id){
 	    if(!is_dir('tmp')) { mkdir('tmp'); chmod(0777, 'tmp'); }
 	    $options = array(
-		'cacheDir' => 'tmp/',
-		'lifeTime' => 1800
+		'cacheDir' => CACHE_DIR,
+		'lifeTime' => LIFE_TIME
 	    );
 	    $Cache_Lite = new Cache_Lite($options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		$r = $Cache_Lite->save($data, $id);
 	    }
 	    return true;
+	}
+
+	/**
+	 * キャッシュを削除する
+	 */
+	private function cacheRemove(){
+	    $dir = scandir(CACHE_BASE_DIR);
+	    foreach($dir as $val){
+		//こんな書き方をしてみる・・・
+		if(!preg_match('/^\.$|^\.\.$/', $val) && ((int) (time() - filemtime(CACHE_BASE_DIR . $val))) > LIFE_TIME){
+		    unlink(CACHE_BASE_DIR . $val);
+		}
+	    }
 	}
 
 	/**
