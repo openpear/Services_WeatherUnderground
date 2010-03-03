@@ -28,12 +28,17 @@ interface WeatherUnderground{
 class Services_WeatherUnderground implements WeatherUnderground {
 
 	public $weather = null;
+	
+	private $cache_options = array(
+		'cacheDir' => CACHE_DIR,
+		'lifeTime' => LIFE_TIME
+	);
 
 	/**
 	 *コンストラクタ
 	 *
 	 * @param $query string
-	 * 今のところはプロパティに代入
+	 * プロパティに代入
 	 */
 	public function __construct($query){
 		$this->cacheRemove();
@@ -43,11 +48,11 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	
 	/**
 	 * APIを叩く
-	 * @param $query string 今のところは
+	 * @param $query string
 	 * @return XML
 	 */
 	private function getWeather($query){
-	    $id = sprintf('%s', $query);
+	    $id = $query;
 	    if($this->cacheGet($id)){
 		return $this->cacheGet($id);
 	    }
@@ -56,7 +61,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    $client->get($this->makeUrl($query));
 	    $response = $client->currentResponse();
 	    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-	    $r = $this->cacheSet($response['body'], $id);
+	    $this->cacheSet($response['body'], $id);
+	    unset($id);
+	    unset($query);
 	    return $response['body'];
 	}
 
@@ -85,11 +92,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	private function cacheGet($id){
 	    require_once('Cache/Lite.php');
-	    $options = array(
-		'cacheDir' => CACHE_DIR,
-		'lifeTime' => LIFE_TIME
-	    );
-	    $Cache_Lite = new Cache_Lite($options);
+	    $Cache_Lite = new Cache_Lite($this->cache_options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		return false;
 	    }
@@ -106,14 +109,14 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	private function cacheSet($data, $id){
 	    if(!is_dir('tmp')) { mkdir('tmp'); chmod(0777, 'tmp'); }
-	    $options = array(
-		'cacheDir' => CACHE_DIR,
-		'lifeTime' => LIFE_TIME
-	    );
-	    $Cache_Lite = new Cache_Lite($options);
+	    $Cache_Lite = new Cache_Lite($this->cache_options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		$r = $Cache_Lite->save($data, $id);
+		if($r === false){
+			return $r;
+		}
 	    }
+	    unset($Cache_Lite);
 	    return true;
 	}
 
@@ -121,13 +124,14 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * キャッシュを削除する
 	 */
 	private function cacheRemove(){
+		if(!is_dir(CACHE_BASE_DIR)) return false;
 	    $dir = scandir(CACHE_BASE_DIR);
 	    foreach($dir as $val){
-		//こんな書き方をしてみる・・・
-		if(!preg_match('/^\.$|^\.\.$/', $val) && ((int) (time() - filemtime(CACHE_BASE_DIR . $val))) > LIFE_TIME){
+		if($val !== '.' || $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val))) > LIFE_TIME){
 		    unlink(CACHE_BASE_DIR . $val);
 		}
 	    }
+	    unset($dir);
 	}
 
 	/**
