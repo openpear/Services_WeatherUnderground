@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.1.5 2009/03/01
+ *  @version	Services_WeatherUnderground v 0.1.5 2010/03/05
  *
  */
 
@@ -47,7 +47,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	}
 	
 	/**
-	 * APIを叩く
+	 * WUGのAPIを叩く
 	 * @param $query string
 	 * @return XML
 	 */
@@ -124,7 +124,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * キャッシュを削除する
 	 */
 	private function cacheRemove(){
-		if(!is_dir(CACHE_BASE_DIR)) return false;
+	    if(!is_dir(CACHE_BASE_DIR)) return false;
 	    $dir = scandir(CACHE_BASE_DIR);
 	    foreach($dir as $val){
 		if($val !== '.' || $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val))) > LIFE_TIME){
@@ -236,7 +236,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		    $wind_dir = '南西';
 		    break;
 		case 'Variable':
-		    $wind_dir = 'N/A';
+		    $wind_dir = '無風';
 		    break;
 	    }
 	    return $wind_dir;
@@ -288,7 +288,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		//風向
 		'wind_dir' => $wind_dir,
 		//風速
-		'wind_speed' => $mph . 'm/s',
+		'wind_speed' => $mph . ' m/s',
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
 		    );
