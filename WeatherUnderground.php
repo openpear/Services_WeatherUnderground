@@ -108,7 +108,8 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return 失敗:FALSE
 	 */
 	private function cacheSet($data, $id){
-	    if(!is_dir('tmp')) { mkdir('tmp'); chmod(0777, 'tmp'); }
+	    if(!is_dir('tmp')) mkdir('tmp');
+	    if(strpos(PHP_OS, 'WIN') !== 0) chmod(0777, 'tmp');
 	    $Cache_Lite = new Cache_Lite($this->cache_options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		$r = $Cache_Lite->save($data, $id);
@@ -127,8 +128,10 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    if(!is_dir(CACHE_BASE_DIR)) return false;
 	    $dir = scandir(CACHE_BASE_DIR);
 	    foreach($dir as $val){
-		if($val !== '.' || $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val))) > LIFE_TIME){
-		    unlink(CACHE_BASE_DIR . $val);
+		if($val !== '.' && $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val)) > LIFE_TIME)){
+		    if(file_exists(CACHE_BASE_DIR . $val)){
+			unlink(CACHE_BASE_DIR . $val);
+		    }
 		}
 	    }
 	    unset($dir);
@@ -175,69 +178,27 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	protected function getWindDir($winddir){
 	    switch($winddir){
-		case 'NNW':
-		    $wind_dir = '北北西';
-		    break;
-		case 'NW':
-		    $wind_dir = '北西';
-		    break;
-		case 'WNW':
-		    $wind_dir = '西北西';
-		    break;
-		case 'W':
-		    $wind_dir = '西';
-		    break;
-		case 'West':
-		    $wind_dir = '西';
-		    break;
-		case 'N':
-		    $wind_dir = '北';
-		    break;
-		case 'North':
-		    $wind_dir = '北';
-		    break;
-		case 'E':
-		    $wind_dir = '東';
-		    break;
-		case 'East':
-		    $wind_dir = '東';
-		    break;
-		case 'NE':
-		    $wind_dir = '北東';
-		    break;
-		case 'NNE':
-		    $wind_dir = '北北東';
-		    break;
-		case 'ENE':
-		    $wind_dir = '東北東';
-		    break;
-		case 'S':
-		    $wind_dir = '南';
-		    break;
-		case 'South':
-		    $wind_dir = '南';
-		    break;
-		case 'SE':
-		    $wind_dir = '南東';
-		    break;
-		case 'SSE':
-		    $wind_dir = '南南東';
-		    break;
-		case 'ESE':
-		    $wind_dir = '東南東';
-		    break;
-		case 'WSW':
-		    $wind_dir = '西南西';
-		    break;
-		case 'SSW':
-		    $wind_dir = '南南西';
-		    break;
-		case 'SW':
-		    $wind_dir = '南西';
-		    break;
-		case 'Variable':
-		    $wind_dir = '無風';
-		    break;
+		case 'NNW':$wind_dir = '北北西';break;
+		case 'NW':$wind_dir = '北西';break;
+		case 'WNW':$wind_dir = '西北西';break;
+		case 'W':$wind_dir = '西';break;
+		case 'West':$wind_dir = '西';break;
+		case 'N':$wind_dir = '北';break;
+		case 'North':$wind_dir = '北';break;
+		case 'E':$wind_dir = '東';break;
+		case 'East':$wind_dir = '東';break;
+		case 'NE':$wind_dir = '北東';break;
+		case 'NNE':$wind_dir = '北北東';break;
+		case 'ENE':$wind_dir = '東北東';break;
+		case 'S':$wind_dir = '南';break;
+		case 'South':$wind_dir = '南';break;
+		case 'SE':$wind_dir = '南東';break;
+		case 'SSE':$wind_dir = '南南東';break;
+		case 'ESE':$wind_dir = '東南東';break;
+		case 'WSW':$wind_dir = '西南西';break;
+		case 'SSW':$wind_dir = '南南西';break;
+		case 'SW':$wind_dir = '南西';break;
+		case 'Variable':$wind_dir = '無風';break;
 	    }
 	    return $wind_dir;
 	}
@@ -259,6 +220,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	public function getWeatherData(){
 	    if(!$this->weather['station_id']){
+		unset($this->weather);
 		return CITY_NOT_FOUND;
 	    }
 
@@ -267,6 +229,8 @@ class Services_WeatherUnderground implements WeatherUnderground {
 
 	    //風速変換
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
+
+	    $mph = $mph == 0 ? '無風' : $mph . ' m/s';
 
 	    $weather = array(
 		//街
@@ -288,7 +252,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 		//風向
 		'wind_dir' => $wind_dir,
 		//風速
-		'wind_speed' => $mph . ' m/s',
+		'wind_speed' => $mph,
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
 		    );
