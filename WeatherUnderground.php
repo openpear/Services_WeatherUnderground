@@ -109,7 +109,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 */
 	private function cacheSet($data, $id){
 	    if(!is_dir('tmp')) mkdir('tmp');
-	    if(strpos(PHP_OS, 'WIN') !== 0) chmod(0777, 'tmp');
+	    if(strpos(PHP_OS, 'WIN') !== 0) chmod('tmp', 0777);
 	    $Cache_Lite = new Cache_Lite($this->cache_options);
 	    if(!$this->cacheCheck($Cache_Lite, $id)){
 		$r = $Cache_Lite->save($data, $id);
