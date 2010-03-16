@@ -72,10 +72,18 @@ $weather = $wg->getWeatherData();
     </tr>
     <tr>
 	<td>
-	    風向
+	    不快指数
 	</td>
 	<td>
-	    <?php echo $weather['wind_dir'] ?>
+	    <?php echo $weather['di'] ?>
+	</td>
+    </tr>
+<tr>
+	<td>
+	    不快指数(体感)
+	</td>
+	<td>
+	    <?php echo $weather['feel_di'] ?>
 	</td>
     </tr>
     <tr>
@@ -84,6 +92,22 @@ $weather = $wg->getWeatherData();
 	</td>
 	<td>
 	    <?php echo $weather['wind_speed'] ?>
+	</td>
+    </tr>
+    <tr>
+	<td>
+	    風力
+	</td>
+	<td>
+	    <?php echo $weather['wind_power'] ?>
+	</td>
+    </tr>
+    <tr>
+	<td>
+	    海上情報
+	</td>
+	<td>
+	    <?php echo $weather['sea_attention'] ?>
 	</td>
     </tr>
     <tr>
