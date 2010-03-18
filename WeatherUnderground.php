@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.2.0 2010/03/16
+ *  @version	Services_WeatherUnderground v 0.2.0 2010/03/18
  *
  */
 
@@ -210,8 +210,37 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    $mph = (int) round($mph * MPH_MS, 2);
+	    $mph = round($mph * MPH_MS, 1);
 	    return $mph;
+	}
+
+	/**
+	 *
+	 * @param <type> $mph
+	 * @return <type>
+	 */
+	protected function di($mph){
+	    //不快指数
+	    $h = preg_replace("/%| /", "", $this->weather['relative_humidity']);
+	    $di = 0.81 * $this->weather['temp_c'] + 0.01 * $h * (0.99 * $this->weather['temp_c'] - 14.3 + 46.3);
+	    return $di;
+	}
+
+	/**
+	 *
+	 * @param <type> $di
+	 * @return <type> 
+	 */
+	protected function feelDi($di){
+	    if($di < 55) $feel_di = '寒い';
+	    if($di >= 55 && $di < 60) $feel_di = '肌寒い';
+	    if($di >= 60 && $di < 65) $feel_di = '無感';
+	    if($di >= 65 && $di < 70) $feel_di = '快適';
+	    if($di >= 70 && $di < 75) $feel_di = '暑くない';
+	    if($di >= 75 && $di < 80) $feel_di = 'やや暑い';
+	    if($di >= 80 && $di < 85) $feel_di = '汗が出る';
+	    if($di >= 85) $feel_di = '暑すぎる';
+	    return $feel_di;
 	}
 
 	/**
@@ -231,19 +260,10 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
 
 	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
+	    $di = $this->di($mph);
+	    $feel_di = $this->feelDi($di);
 
-	    //不快指数
-	    $h = preg_replace("/%| /", "", $this->weather['relative_humidity']);
-	    $di = 0.81 * $this->weather['temp_c'] + 0.01 * $h * (0.99 * $this->weather['temp_c'] - 14.3 + 46.3);
 
-	    if($di < 55) $feel_di = '寒い';
-	    if($di >= 55 && $di < 60) $feel_di = '肌寒い';
-	    if($di >= 60 && $di < 65) $feel_di = '無感';
-	    if($di >= 65 && $di < 70) $feel_di = '快適';
-	    if($di >= 70 && $di < 75) $feel_di = '暑くない';
-	    if($di >= 75 && $di < 80) $feel_di = 'やや暑い';
-	    if($di >= 80 && $di < 85) $feel_di = '汗が出る';
-	    if($di >= 85) $feel_di = '暑すぎる';
 
 	    //風力
 	    if($mph === 0) $wind_power = '静穏';
