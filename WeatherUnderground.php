@@ -4,7 +4,7 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.2.0 2010/03/18
+ *  @version	Services_WeatherUnderground v 0.2.0 2010/03/19
  *
  */
 
@@ -288,7 +288,7 @@ class Services_WeatherUnderground implements WeatherUnderground {
 
 	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
 	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
-	    //天気アイコンもキャッシュ
+	    //パーツでの利用を前提とした天気アイコンキャッシュ
 	    $img = imagecreatefromgif($img_url);
 	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
 	    imagegif($img, 'weather_img/' . $icon);
