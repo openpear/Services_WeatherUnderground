@@ -4,26 +4,16 @@
  *
  *  @author	    FreeBSE <freebse@live.jp> <http://panasocli.cc/wordpress>
  *  @package	Services_WeatherUnderground
- *  @version	Services_WeatherUnderground v 0.2.0 2010/03/19
+ *  @version	Services_WeatherUnderground v 0.2.0
  *
  */
 
-//API URL
-define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml');
+require_once '../WeatherUnderground/lib/settings.php';
+require_once '../WeatherUnderground/lib/error.php';
+require_once '../WeatherUnderground/lib/interface.php';
 
-//各種設定
-define('MPH_MS', 0.44704);
-define('CACHE_DIR', 'tmp/');
+//恐らくディレクトリが変わってしまうのでこの設定だけここに
 define('CACHE_BASE_DIR', dirname(__FILE__) . '/WeatherUnderground/' . CACHE_DIR);
-define('LIFE_TIME', 1800);
-
-//エラーコード
-define('CITY_NOT_FOUND', 0x01);
-
-interface WeatherUnderground{
-    public function getWeatherData();
-    public function getRawWeatherData();
-}
 
 class Services_WeatherUnderground implements WeatherUnderground {
 
@@ -215,11 +205,10 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	}
 
 	/**
-	 *
-	 * @param <type> $mph
-	 * @return <type>
+	 * 不快指数
+	 * @return int
 	 */
-	protected function di($mph){
+	protected function di(){
 	    //不快指数
 	    $h = preg_replace("/%| /", "", $this->weather['relative_humidity']);
 	    $di = 0.81 * $this->weather['temp_c'] + 0.01 * $h * (0.99 * $this->weather['temp_c'] - 14.3 + 46.3);
@@ -227,9 +216,9 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	}
 
 	/**
-	 *
-	 * @param <type> $di
-	 * @return <type> 
+	 * 不快指数(体感)
+	 * @param int $di 不快指数値
+	 * @return string
 	 */
 	protected function feelDi($di){
 	    if($di < 55) $feel_di = '寒い';
@@ -242,7 +231,43 @@ class Services_WeatherUnderground implements WeatherUnderground {
 	    if($di >= 85) $feel_di = '暑すぎる';
 	    return $feel_di;
 	}
-
+	
+	/**
+	 * 風力変換
+	 * @param int $mph 風速
+	 */
+	protected function windPower($mph)
+	{
+	    if($mph === 0) $wind_power = '静穏';
+	    if($mph === 1) $wind_power = 1;
+	    if($mph >= 2 && $mph <= 3) $wind_power = 2;
+	    if($mph > 3 && $mph <= 5) $wind_power = 3;
+	    if($mph > 5 && $mph <= 7) $wind_power = 4;
+	    if($mph > 7 && $mph <= 10) $wind_power = 5;
+	    if($mph > 10 && $mph <= 13) $wind_power = 6;
+	    if($mph > 13 && $mph <= 17) $wind_power = 7;
+	    if($mph > 17 && $mph <= 20) $wind_power = 8;
+	    if($mph > 20 && $mph <= 24) $wind_power = 9;
+	    if($mph > 24 && $mph <= 28) $wind_power = 10;
+	    if($mph > 28 && $mph <= 32) $wind_power = 11;
+	    if($mph > 32) $wind_power = 12;
+	    return $wind_power;
+	}
+	
+	/**
+	 * 海上警報
+	 * @param int $wind_power
+	 * @return string
+	 */
+	protected function seaAttention($wind_power){
+	    if($wind_power < 7) $sea_attention = 'None';
+	    if($wind_power === 7) $sea_attention = '海上風警報';
+	    if($wind_power >= 8 && $wind_power <= 9) $sea_attention = '海上強風警報';
+	    if($wind_power >= 10 && $wind_power <= 11) $sea_attention = '海上暴風警報';
+	    if($wind_power >= 12) $sea_attention = '海上台風警報';
+	    return $sea_attention;
+	}
+	
 	/**
 	 * わかりやすい形で天気情報を取得する
 	 * @return Array
@@ -258,33 +283,21 @@ class Services_WeatherUnderground implements WeatherUnderground {
 
 	    //風速変換
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
-
+	    
+		//風速変換(無風時)
 	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
-	    $di = $this->di($mph);
+	    
+	    //不快指数
+	    $di = $this->di();
+	    
+	    //不快指数(体感)
 	    $feel_di = $this->feelDi($di);
-
-
-
-	    //風力
-	    if($mph === 0) $wind_power = '静穏';
-	    if($mph === 1) $wind_power = 1;
-	    if($mph >= 2 && $mph <= 3) $wind_power = 2;
-	    if($mph > 3 && $mph <= 5) $wind_power = 3;
-	    if($mph > 5 && $mph <= 7) $wind_power = 4;
-	    if($mph > 7 && $mph <= 10) $wind_power = 5;
-	    if($mph > 10 && $mph <= 13) $wind_power = 6;
-	    if($mph > 13 && $mph <= 17) $wind_power = 7;
-	    if($mph > 17 && $mph <= 20) $wind_power = 8;
-	    if($mph > 20 && $mph <= 24) $wind_power = 9;
-	    if($mph > 24 && $mph <= 28) $wind_power = 10;
-	    if($mph > 28 && $mph <= 32) $wind_power = 11;
-	    if($mph > 32) $wind_power = 12;
-
-	    if($wind_power < 7) $sea_attention = 'None';
-	    if($wind_power === 7) $sea_attention = '海上風警報';
-	    if($wind_power >= 8 && $wind_power <= 9) $sea_attention = '海上強風警報';
-	    if($wind_power >= 10 && $wind_power <= 11) $sea_attention = '海上暴風警報';
-	    if($wind_power >= 12) $sea_attention = '海上台風警報';
+	    
+	    //風力変換
+	    $wind_power = $this->windPower($mph);
+	    
+	    //海上警報
+	    $sea_attention = $this->seaAttention($wind_power);
 
 	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
 	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
