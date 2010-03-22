@@ -114,7 +114,7 @@ abstract class WeatherUndergroundCore {
 	 */
 	protected function windPower($mph)
 	{
-	    if($mph === 0) $wind_power = '静穏';
+	    if($mph >= 0 && $mph < 1) $wind_power = '静穏';
 	    if($mph === 1) $wind_power = 1;
 	    if($mph >= 2 && $mph <= 3) $wind_power = 2;
 	    if($mph > 3 && $mph <= 5) $wind_power = 3;

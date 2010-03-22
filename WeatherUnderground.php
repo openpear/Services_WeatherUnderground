@@ -23,6 +23,18 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	);
 	
 	/**
+	 *コンストラクタ
+	 *
+	 * @param $query string
+	 * プロパティに代入
+	 */
+	public function __construct($query){
+		$this->cacheRemove();
+		$data = $this->getWeather($query);
+		$this->weather = $this->toArray($data);
+	}
+
+	/**
 	 * WUGのAPIを叩く
 	 * @param $query string
 	 * @return XML
@@ -41,18 +53,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    unset($id);
 	    unset($query);
 	    return $response['body'];
-	}
-	
-	/**
-	 *コンストラクタ
-	 *
-	 * @param $query string
-	 * プロパティに代入
-	 */
-	public function __construct($query){
-		$this->cacheRemove();
-		$data = $this->getWeather($query);
-		$this->weather = $this->toArray($data);
 	}
 	
 	/**
@@ -137,6 +137,17 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	}
 
 
+	private function weatherIcon(){
+	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
+	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
+	    //パーツでの利用を前提とした天気アイコンキャッシュ
+	    $img = imagecreatefromgif($img_url);
+	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
+	    imagegif($img, 'weather_img/' . $icon);
+	    imagedestroy($img);
+	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
+	    return $icon;
+	}
 	
 	/**
 	 * わかりやすい形で天気情報を取得する
@@ -169,14 +180,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    //海上警報
 	    $sea_attention = $this->seaAttention($wind_power);
 
-	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
-	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
-	    //パーツでの利用を前提とした天気アイコンキャッシュ
-	    $img = imagecreatefromgif($img_url);
-	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
-	    imagegif($img, 'weather_img/' . $icon);
-	    imagedestroy($img);
-	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
+	    $icon = $this->weatherIcon();
 
 	    $weather = array(
 		//街
