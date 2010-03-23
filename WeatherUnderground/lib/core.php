@@ -11,9 +11,42 @@
 require_once '../WeatherUnderground/lib/interface.php';
 require_once '../WeatherUnderground/lib/settings.php';
 require_once '../WeatherUnderground/lib/error.php';
+require_once '../WeatherUnderground/lib/cache.php';
 
 abstract class WeatherUndergroundCore {
-	
+
+	protected $cache = null;
+
+	private $cache_options = array(
+		'cacheDir' => CACHE_DIR,
+		'lifeTime' => LIFE_TIME
+	);
+
+	protected function __construct(){
+	    $this->cache = new WeatherUndergroundCache($this->cache_options);
+	}
+
+	/**
+	 * WUGのAPIを叩く
+	 * @param $query string
+	 * @return XML
+	 */
+	protected function getWeather($query){
+	    $id = $query;
+	    if($this->cache->cacheGet($id)){
+		return $this->cache->cacheGet($id);
+	    }
+	    require_once 'HTTP/Client.php';
+	    $client = new HTTP_Client();
+	    $client->get($this->makeUrl($query));
+	    $response = $client->currentResponse();
+	    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
+	    $this->cache->cacheSet($response['body'], $id);
+	    unset($id);
+	    unset($query);
+	    return $response['body'];
+	}
+
 	/**
 	 * XMLを配列に変換する
 	 *
@@ -115,7 +148,7 @@ abstract class WeatherUndergroundCore {
 	protected function windPower($mph)
 	{
 	    if($mph >= 0 && $mph < 1) $wind_power = '静穏';
-	    if($mph === 1) $wind_power = 1;
+	    if($mph >= 1 && $mph < 2) $wind_power = 1;
 	    if($mph >= 2 && $mph <= 3) $wind_power = 2;
 	    if($mph > 3 && $mph <= 5) $wind_power = 3;
 	    if($mph > 5 && $mph <= 7) $wind_power = 4;

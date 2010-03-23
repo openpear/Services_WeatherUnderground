@@ -17,11 +17,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 
 	public $weather = null;
 	
-	private $cache_options = array(
-		'cacheDir' => CACHE_DIR,
-		'lifeTime' => LIFE_TIME
-	);
-	
 	/**
 	 *コンストラクタ
 	 *
@@ -29,102 +24,12 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	 * プロパティに代入
 	 */
 	public function __construct($query){
-		$this->cacheRemove();
+		parent::__construct();
+		$this->cache->cacheRemove();
 		$data = $this->getWeather($query);
 		$this->weather = $this->toArray($data);
 	}
-
-	/**
-	 * WUGのAPIを叩く
-	 * @param $query string
-	 * @return XML
-	 */
-	protected function getWeather($query){
-	    $id = $query;
-	    if($this->cacheGet($id)){
-		return $this->cacheGet($id);
-	    }
-	    require_once 'HTTP/Client.php';
-	    $client = new HTTP_Client();
-	    $client->get($this->makeUrl($query));
-	    $response = $client->currentResponse();
-	    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-	    $this->cacheSet($response['body'], $id);
-	    unset($id);
-	    unset($query);
-	    return $response['body'];
-	}
 	
-	/**
-	 *
-	 * 指定されたキャッシュがあるかチェックする
-	 *
-	 * @param Object $Cache_Lite
-	 * @param String $id
-	 * @return 成功:キャッシュデータ 失敗:FALSE
-	 */
-	private function cacheCheck($Cache_Lite, $id){
-	    if(!is_dir('tmp')) mkdir('tmp');
-	    if (!$Cache_Lite->get($id)) {
-		return false;
-	    }
-	    return $Cache_Lite->get($id);
-	}
-
-	/**
-	 *
-	 * キャッシュを取得する
-	 *
-	 * @param String $id
-	 * @return 成功:キャッシュデータ 失敗:FALSE
-	 */
-	private function cacheGet($id){
-	    require_once('Cache/Lite.php');
-	    $Cache_Lite = new Cache_Lite($this->cache_options);
-	    if(!$this->cacheCheck($Cache_Lite, $id)){
-		return false;
-	    }
-	    return $Cache_Lite->get($id);
-	}
-
-	/**
-	 *
-	 * キャッシュを作る
-	 *
-	 * @param 天気データ $data
-	 * @param String $id
-	 * @return 失敗:FALSE
-	 */
-	private function cacheSet($data, $id){
-	    if(!is_dir('tmp')) mkdir('tmp');
-	    if(strpos(PHP_OS, 'WIN') !== 0) chmod('tmp', 0777);
-	    $Cache_Lite = new Cache_Lite($this->cache_options);
-	    if(!$this->cacheCheck($Cache_Lite, $id)){
-		$r = $Cache_Lite->save($data, $id);
-		if($r === false){
-			return $r;
-		}
-	    }
-	    unset($Cache_Lite);
-	    return true;
-	}
-
-	/**
-	 * キャッシュを削除する
-	 */
-	private function cacheRemove(){
-	    if(!is_dir(CACHE_BASE_DIR)) return false;
-	    $dir = scandir(CACHE_BASE_DIR);
-	    foreach($dir as $val){
-		if($val !== '.' && $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val)) > LIFE_TIME)){
-		    if(file_exists(CACHE_BASE_DIR . $val)){
-			unlink(CACHE_BASE_DIR . $val);
-		    }
-		}
-	    }
-	    unset($dir);
-	}
-
 	/**
 	 * WUGの生の天気情報を取得する
 	 * @return Array
