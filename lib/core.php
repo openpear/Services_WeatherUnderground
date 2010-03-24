@@ -133,8 +133,7 @@ abstract class WeatherUndergroundCore {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    $mph = round($mph * MPH_MS, 1);
-	    return $mph;
+	    return intval(sprintf("%01.2f",$mph * MPH_MS));
 	}
 
 	/**
