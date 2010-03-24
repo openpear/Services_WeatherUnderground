@@ -26,7 +26,7 @@ class WeatherUndergroundCache {
 	 * @return 成功:キャッシュデータ 失敗:FALSE
 	 */
 	public function cacheCheck($cache, $id){
-	    if(!is_dir('tmp')) mkdir('tmp');
+	    if(!is_dir('tmp') && is_writable('./')) mkdir('tmp');
 	    if (!$cache->get($id)) {
 		return false;
 	    }
@@ -56,7 +56,7 @@ class WeatherUndergroundCache {
 	 * @return 失敗:FALSE
 	 */
 	public function cacheSet($data, $id){
-	    if(!is_dir('tmp')) mkdir('tmp');
+	    if(!is_dir('tmp') && is_writable('./')) mkdir('tmp');
 	    if(strpos(PHP_OS, 'WIN') !== 0) chmod('tmp', 0777);
 	    if(!$this->cacheCheck($this->cache, $id)){
 		$r = $this->cache->save($data, $id);
