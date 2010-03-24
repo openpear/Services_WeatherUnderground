@@ -133,7 +133,7 @@ abstract class WeatherUndergroundCore {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    return intval(sprintf("%01.2f",$mph * MPH_MS));
+	    return ((float) (sprintf("%01.2f",$mph * MPH_MS)));
 	}
 
 	/**
@@ -144,7 +144,7 @@ abstract class WeatherUndergroundCore {
 	    //不快指数
 	    $h = preg_replace("/%| /", "", $this->weather['relative_humidity']);
 	    $di = 0.81 * $this->weather['temp_c'] + 0.01 * $h * (0.99 * $this->weather['temp_c'] - 14.3 + 46.3);
-	    return $di;
+	    return ((float) (sprintf("%01.2f",$di)));
 	}
 
 	/**
