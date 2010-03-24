@@ -15,19 +15,15 @@ define('CACHE_BASE_DIR', dirname(__FILE__) . '/WeatherUnderground/' . CACHE_DIR)
 
 class Services_WeatherUnderground extends WeatherUndergroundCore implements WeatherUnderground {
 
-	public $weather = null;
-	
 	/**
 	 *コンストラクタ
 	 *
 	 * @param $query string
-	 * プロパティに代入
+	 * 
 	 */
 	public function __construct($query){
-		parent::__construct();
+		parent::__construct($query);
 		$this->cache->cacheRemove();
-		$data = $this->getWeather($query);
-		$this->weather = $this->toArray($data);
 	}
 	
 	/**
@@ -39,19 +35,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return CITY_NOT_FOUND;
 	    }
 	    return $this->weather;
-	}
-
-
-	private function weatherIcon(){
-	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
-	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
-	    //パーツでの利用を前提とした天気アイコンキャッシュ
-	    $img = imagecreatefromgif($img_url);
-	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
-	    imagegif($img, 'weather_img/' . $icon);
-	    imagedestroy($img);
-	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
-	    return $icon;
 	}
 	
 	/**
@@ -70,7 +53,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    //風速変換
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
 	    
-		//風速変換(無風時)
+	    //風速変換(無風時)
 	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
 	    
 	    //不快指数
@@ -85,6 +68,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    //海上警報
 	    $sea_attention = $this->seaAttention($wind_power);
 
+	    //天気アイコン
 	    $icon = $this->weatherIcon();
 
 	    $weather = array(
@@ -118,7 +102,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		'sea_attention' => $sea_attention,
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
-		    );
+	    );
 	    return $weather;
 	}
 }

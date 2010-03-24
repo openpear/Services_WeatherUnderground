@@ -16,14 +16,21 @@ require_once '../WeatherUnderground/lib/cache.php';
 abstract class WeatherUndergroundCore {
 
 	protected $cache = null;
+	public $weather = null;
 
 	private $cache_options = array(
 		'cacheDir' => CACHE_DIR,
 		'lifeTime' => LIFE_TIME
 	);
 
-	protected function __construct(){
+	/**
+	 * コンストラクタで天気を一気に取得ぅぅぅ！
+	 *
+	 * @param string $query
+	 */
+	protected function __construct($query){
 	    $this->cache = new WeatherUndergroundCache($this->cache_options);
+	    $this->weather = $this->toArray($this->getWeather($query));
 	}
 
 	/**
@@ -67,6 +74,23 @@ abstract class WeatherUndergroundCore {
 	 */
 	protected function makeUrl($query){
 		return sprintf('%s?query=%s', WG_API_AP, $query);
+	}
+
+	/**
+	 * 天気アイコンをキャッシュしてから返す
+	 *
+	 * @return string
+	 */
+	protected function weatherIcon(){
+	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
+	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
+	    //パーツでの利用を前提とした天気アイコンキャッシュ
+	    $img = imagecreatefromgif($img_url);
+	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
+	    imagegif($img, 'weather_img/' . $icon);
+	    imagedestroy($img);
+	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
+	    return $icon;
 	}
 
 	/**
