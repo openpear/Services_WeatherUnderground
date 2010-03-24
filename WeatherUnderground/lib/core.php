@@ -86,7 +86,7 @@ abstract class WeatherUndergroundCore {
 	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
 	    //パーツでの利用を前提とした天気アイコンキャッシュ
 	    $img = imagecreatefromgif($img_url);
-	    if(!is_dir('weather_img') && is_written('weather_img')) mkdir('weather_img');
+	    if(!is_dir('weather_img') && is_writable('weather_img')) mkdir('weather_img');
 	    imagegif($img, 'weather_img/' . $icon);
 	    imagedestroy($img);
 	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;

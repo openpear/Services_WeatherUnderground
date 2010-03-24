@@ -57,7 +57,7 @@ class WeatherUndergroundCache {
 	 */
 	public function cacheSet($data, $id){
 	    if(!is_dir('tmp') && is_writable('./')) mkdir('tmp');
-	    if(strpos(PHP_OS, 'WIN') !== 0) chmod('tmp', 0777);
+	    if(strpos(PHP_OS, 'WIN') !== 0 && is_writable('./')) chmod('tmp', 0777);
 	    if(!$this->cacheCheck($this->cache, $id)){
 		$r = $this->cache->save($data, $id);
 		if($r === false){
