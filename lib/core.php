@@ -39,19 +39,18 @@ abstract class WeatherUndergroundCore {
 	 * @return XML
 	 */
 	protected function getWeather($query){
-	    $id = $query;
-	    if($this->cache->cacheGet($id)){
-		return $this->cache->cacheGet($id);
+	    if($this->cache->cacheGet($query)){
+		return $this->cache->cacheGet($query);
 	    }
 	    require_once 'HTTP/Client.php';
 	    $client = new HTTP_Client();
 	    $client->get($this->makeUrl($query));
 	    $response = $client->currentResponse();
-	    $response['body'] = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-	    $this->cache->cacheSet($response['body'], $id);
-	    unset($id);
+	    $body = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
+	    $this->cache->cacheSet($body, $id);
 	    unset($query);
-	    return $response['body'];
+	    unset($response);
+	    return $body;
 	}
 
 	/**
@@ -85,12 +84,13 @@ abstract class WeatherUndergroundCore {
 	    $img_url = $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
 	    $icon = $this->weather['icon'] . $this->weather['icon_url_name'];
 	    //パーツでの利用を前提とした天気アイコンキャッシュ
-	    $img = imagecreatefromgif($img_url);
 	    if(!is_dir('weather_img') && is_writable('weather_img')) mkdir('weather_img');
-	    imagegif($img, 'weather_img/' . $icon);
-	    imagedestroy($img);
-	    $icon = is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
-	    return $icon;
+	    if(!is_dir('weather_img')) return $img_url;
+//	    $img = imagecreatefromgif($img_url);
+//	    imagegif($img, 'weather_img/' . $icon);
+//	    imagedestroy($img);
+	    file_put_contents('weather_img/' . $icon, file_get_contents($img_url));
+	    return is_file('weather_img/' . $icon) ? 'weather_img/' . $icon : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
 	}
 
 	/**
@@ -133,7 +133,7 @@ abstract class WeatherUndergroundCore {
 	 * @return int Metor
 	 */
 	protected function convertMphToMetor($mph){
-	    return substr(sprintf("%01.2f",$mph * MPH_MS), 0, 4);
+	    return substr(sprintf('%01.2f',$mph * MPH_MS), 0, 4);
 	}
 
 	/**
@@ -142,9 +142,9 @@ abstract class WeatherUndergroundCore {
 	 */
 	protected function di(){
 	    //不快指数
-	    $h = preg_replace("/%| /", "", $this->weather['relative_humidity']);
+	    $h = preg_replace('/%| /', '', $this->weather['relative_humidity']);
 	    $di = 0.81 * $this->weather['temp_c'] + 0.01 * $h * (0.99 * $this->weather['temp_c'] - 14.3 + 46.3);
-	    return substr(sprintf("%01.2f",$di), 0, 4);
+	    return substr(sprintf('%01.2f',$di), 0, 4);
 	}
 
 	/**

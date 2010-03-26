@@ -75,7 +75,7 @@ class WeatherUndergroundCache {
 	    if(!is_dir(CACHE_BASE_DIR)) return false;
 	    $dir = scandir(CACHE_BASE_DIR);
 	    foreach($dir as $val){
-		if($val !== '.' && $val !== '..' && ((int) (time() - filemtime(CACHE_BASE_DIR . $val)) > LIFE_TIME)){
+		if($val !== '.' && $val !== '..' && ((int) ($_SERVER['REQUEST_TIME'] - filemtime(CACHE_BASE_DIR . $val)) > LIFE_TIME)){
 		    if(file_exists(CACHE_BASE_DIR . $val)){
 			unlink(CACHE_BASE_DIR . $val);
 		    }
