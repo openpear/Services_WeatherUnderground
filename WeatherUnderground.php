@@ -47,8 +47,9 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return CITY_NOT_FOUND;
 	    }
 
-	    //風向情報の取得
-	    $wind_dir = $this->getWindDir($this->weather['wind_dir']);
+	    if($_COOKIE['weather']){
+		return unserialize($_COOKIE['weather']);
+	    }
 
 	    //風速変換
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
@@ -58,18 +59,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    
 	    //不快指数
 	    $di = $this->di();
-	    
-	    //不快指数(体感)
-	    $feel_di = $this->feelDi($di);
-	    
-	    //風力変換
-	    $wind_power = $this->windPower($mph);
-	    
-	    //海上警報
-	    $sea_attention = $this->seaAttention($wind_power);
-
-	    //天気アイコン
-	    $icon = $this->weatherIcon();
 
 	    $weather = array(
 		//街
@@ -77,7 +66,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//国
 		'country' => $this->weather['display_location']['state_name'],
 		//天気画像
-		'image' => $icon,
+		'image' => $this->weatherIcon(),
 		//観測地
 		'observation_location' => $this->weather['observation_location']['city'],
 		//観測時間
@@ -91,18 +80,21 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//不快指数
 		'di' => $di,
 		//体感
-		'feel_di' => $feel_di,
+		'feel_di' => $this->feelDi($di),
 		//風向
-		'wind_dir' => $wind_dir,
+		'wind_dir' => $this->getWindDir($this->weather['wind_dir']),
 		//風速
 		'wind_speed' => $mph,
 		//風力
-		'wind_power' => $wind_power,
+		'wind_power' => $this->windPower($mph),
 		//海上
-		'sea_attention' => $sea_attention,
+		'sea_attention' => $this->seaAttention($wind_power),
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
 	    );
+	    ob_start();
+	    setcookie('weather', serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
+	    ob_end_clean();
 	    return $weather;
 	}
 }
