@@ -187,6 +187,30 @@ abstract class WeatherUndergroundCore {
 	}
 
 	/**
+	 * 風力表現変換
+	 * @param int $wind_power 風力
+	 */
+	protected function windPowerExp($wind_power){
+	    switch($wind_power){
+		case 0:$wind_power_exp = '静穏';break;
+		case 1:$wind_power_exp = '至軽風';break;
+		case 2:$wind_power_exp = '軽風';break;
+		case 3:$wind_power_exp = '軟風';break;
+		case 4:$wind_power_exp = '和風';break;
+		case 5:$wind_power_exp = '疾風';break;
+		case 6:$wind_power_exp = '雄風';break;
+		case 7:$wind_power_exp = '強風';break;
+		case 8:$wind_power_exp = '疾強風';break;
+		case 9:$wind_power_exp = '大強風';break;
+		case 10:$wind_power_exp = '全強風';break;
+		case 11:$wind_power_exp = '暴風';break;
+		case 12:$wind_power_exp = '台風';break;
+		default:$wind_power_exp = 'N/A';break;
+	    }
+	    return $wind_power_exp;
+	}
+
+	/**
 	 * 海上警報
 	 * @param int $wind_power
 	 * @return string

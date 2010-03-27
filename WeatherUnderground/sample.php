@@ -104,6 +104,14 @@ $weather = $wg->getWeatherData();
     </tr>
     <tr>
 	<td>
+	    風力(表現)
+	</td>
+	<td>
+	    <?php echo $weather['wind_power_exp'] ?>
+	</td>
+    </tr>
+    <tr>
+	<td>
 	    海上情報
 	</td>
 	<td>

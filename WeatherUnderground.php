@@ -87,6 +87,8 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		'wind_speed' => $mph,
 		//風力
 		'wind_power' => $this->windPower($mph),
+		//風力(表現)
+		'wind_power_exp' => $this->windPowerExp($this->windPower($mph)),
 		//海上
 		'sea_attention' => $this->seaAttention($wind_power),
 		//気圧
