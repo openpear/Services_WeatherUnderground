@@ -53,12 +53,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 
 	    //風速変換
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
-	    
-	    //風速変換(無風時)
-//	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
-	    
-	    //不快指数
-	    $di = $this->di();
 
 	    $weather = array(
 		//街
@@ -78,7 +72,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//湿度
 		'humidity' => $this->weather['relative_humidity'],
 		//不快指数
-		'di' => $di,
+		'di' => $this->di(),
 		//体感
 		'feel_di' => $this->feelDi($di),
 		//風向
