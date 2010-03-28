@@ -55,7 +55,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
 	    
 	    //風速変換(無風時)
-	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
+//	    $mph = $mph == 0 ? '静穏' : $mph . ' m/s';
 	    
 	    //不快指数
 	    $di = $this->di();
