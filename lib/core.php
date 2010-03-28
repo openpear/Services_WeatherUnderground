@@ -46,8 +46,8 @@ abstract class WeatherUndergroundCore {
 	    $client = new HTTP_Client();
 	    $client->get($this->makeUrl($query));
 	    $response = $client->currentResponse();
-	    $data = mb_convert_encoding($response['body'], 'UTF-8', 'auto');
-	    $this->cache->cacheSet($data, $id);
+	    $this->cache->cacheSet(mb_convert_encoding($response['body'], 'UTF-8', 'auto'), $id);
+	    $data = $response['body'];
 	    unset($query);
 	    unset($response);
 	    return $data;
