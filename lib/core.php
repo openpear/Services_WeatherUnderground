@@ -183,7 +183,7 @@ abstract class WeatherUndergroundCore {
 	}
 
 	/**
-	 * 風力表現変換
+	 * 風力ランク変換
 	 * @param int $wind_power 風力
 	 */
 	protected function windPowerExp($wind_power){
