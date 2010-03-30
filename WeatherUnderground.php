@@ -51,9 +51,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return unserialize($_COOKIE['weather']);
 	    }
 
-	    //風速変換
-	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
-
 	    $weather = array(
 		//街
 		'city' => $this->weather['display_location']['city'],
@@ -78,11 +75,11 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//風向
 		'wind_dir' => $this->getWindDir($this->weather['wind_dir']),
 		//風速
-		'wind_speed' => $mph,
+		'wind_speed' => $this->convertMphToMetor($this->weather['wind_mph']),
 		//風力
 		'wind_power' => $this->windPower($mph),
 		//風力(表現)
-		'wind_power_exp' => $this->windPowerExp($this->windPower($mph)),
+		'wind_power_exp' => $this->windPowerExp($this->windPower($this->convertMphToMetor($this->weather['wind_mph']))),
 		//海上
 		'sea_attention' => $this->seaAttention($wind_power),
 		//気圧
