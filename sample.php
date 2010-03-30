@@ -141,5 +141,4 @@ foreach($wg->weather as $key => $val){
     echo $key , " = " , $val."<br>";
 };
 */
-echo "<br>" . memory_get_peak_usage();
 ?>

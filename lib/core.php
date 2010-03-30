@@ -19,12 +19,12 @@ abstract class WeatherUndergroundCore {
 	public $weather = null;
 
 	private $cache_options = array(
-		'cacheDir' => CACHE_DIR,
-		'lifeTime' => LIFE_TIME
+	    'cacheDir' => CACHE_DIR,
+	    'lifeTime' => LIFE_TIME
 	);
 
 	/**
-	 * コンストラクタで天気を一気に取得ぅぅぅ！
+	 * コンストラクタで天気を一気に取得！
 	 *
 	 * @param string $query
 	 */
@@ -50,6 +50,7 @@ abstract class WeatherUndergroundCore {
 	    $data = $response['body'];
 	    unset($query);
 	    unset($response);
+	    unset($client);
 	    return $data;
 	}
 
@@ -72,7 +73,7 @@ abstract class WeatherUndergroundCore {
 	 * @return string
 	 */
 	protected function makeUrl($query){
-		return sprintf('%s?query=%s', WG_API_AP, $query);
+	    return sprintf('%s?query=%s', WG_API_AP, $query);
 	}
 
 	/**
@@ -120,6 +121,7 @@ abstract class WeatherUndergroundCore {
 		case 'SSW':return '南南西';
 		case 'SW':return '南西';
 		case 'Variable':return '変則';
+		default:return 'N/A';
 	    }
 	}
 
@@ -203,7 +205,6 @@ abstract class WeatherUndergroundCore {
 		case 12:return '台風';
 		default:return 'N/A';
 	    }
-	    return $wind_power_exp;
 	}
 
 	/**
@@ -213,7 +214,7 @@ abstract class WeatherUndergroundCore {
 	 */
 	protected function seaAttention($wind_power){
 	    if($wind_power < 7) return 'None';
-	    if($wind_power === 7) return '海上風警報';
+	    if($wind_power == 7) return '海上風警報';
 	    if($wind_power >= 8 && $wind_power <= 9) return '海上強風警報';
 	    if($wind_power >= 10 && $wind_power <= 11) return '海上暴風警報';
 	    if($wind_power >= 12) return '海上台風警報';
