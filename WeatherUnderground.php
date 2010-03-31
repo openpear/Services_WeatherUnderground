@@ -62,8 +62,6 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		'observation_location' => $this->weather['observation_location']['city'],
 		//観測時間
 		'observation_time' => date("Y年m月d日 H時i分",strtotime(preg_replace("/Last Updated on |JST/", "", $this->weather['observation_time']))),
-		//天気
-		//'weather' => $this->weather['weather'],
 		//気温
 		'temp' => $this->weather['temp_c'] . '℃',
 		//湿度
