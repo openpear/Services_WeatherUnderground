@@ -53,6 +53,8 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    }
 	     */
 
+	    $di = $this->di();
+
 	    $weather = array(
 		//街
 		'city' => $this->weather['display_location']['city'],
@@ -69,7 +71,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//湿度
 		'humidity' => $this->weather['relative_humidity'],
 		//不快指数
-		'di' => $this->di(),
+		'di' => $di,
 		//体感
 		'feel_di' => $this->feelDi($di),
 		//風向
