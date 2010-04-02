@@ -46,10 +46,12 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		unset($this->weather);
 		return CITY_NOT_FOUND;
 	    }
-
+	    
+	    /*
 	    if($_COOKIE['weather']){
 		return unserialize($_COOKIE['weather']);
 	    }
+	     */
 
 	    $weather = array(
 		//街
@@ -83,9 +85,11 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
 	    );
+	    /*
 	    ob_start();
 	    setcookie('weather', serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
 	    ob_end_clean();
+	     */
 	    return $weather;
 	}
 }
