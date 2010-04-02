@@ -54,6 +54,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	     */
 
 	    $di = $this->di();
+	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
 
 	    $weather = array(
 		//街
@@ -77,7 +78,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//風向
 		'wind_dir' => $this->getWindDir($this->weather['wind_dir']),
 		//風速
-		'wind_speed' => $this->convertMphToMetor($this->weather['wind_mph']),
+		'wind_speed' => $mph,
 		//風力
 		'wind_power' => $this->windPower($mph),
 		//風力(表現)
