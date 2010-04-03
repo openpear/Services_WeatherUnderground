@@ -8,7 +8,7 @@
  *
  */
 
-require_once '../WeatherUnderground/lib/core.php';
+require_once dirname(__FILE__) . '/WeatherUnderground/lib/core.php';
 
 //恐らくディレクトリが変わってしまうのでこの設定だけここに
 define('CACHE_BASE_DIR', dirname(__FILE__) . '/WeatherUnderground/' . CACHE_DIR);
