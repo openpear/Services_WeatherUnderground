@@ -83,6 +83,9 @@ abstract class WeatherUndergroundCore {
 	 */
 	protected function weatherIcon(){
 	    //パーツでの利用を前提とした天気アイコンキャッシュ
+	    if(!is_file('weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name'])){
+		return $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
+	    }
 	    if(!is_dir('weather_img') && is_writable('weather_img')) mkdir('weather_img');
 	    if(!is_dir('weather_img')) return $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'];
 	    file_put_contents('weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name'], file_get_contents($this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name']));
