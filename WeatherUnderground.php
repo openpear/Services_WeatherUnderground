@@ -47,10 +47,11 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return CITY_NOT_FOUND;
 	    }
 	    
-	    
+	    /*ちょっと吟味
 	    if($_COOKIE['weather_' . HASH]){
 		return unserialize($_COOKIE['weather_' . HASH]);
 	    }
+	     */
 	    
 
 	    $di = $this->di();
