@@ -47,11 +47,11 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return CITY_NOT_FOUND;
 	    }
 	    
-	    /*
-	    if($_COOKIE['weather']){
-		return unserialize($_COOKIE['weather']);
+	    
+	    if($_COOKIE['weather'] . '_' . HASH){
+		return unserialize($_COOKIE['weather'] . '_' . HASH);
 	    }
-	     */
+	    
 
 	    $di = $this->di();
 	    $mph = $this->convertMphToMetor($this->weather['wind_mph']);
@@ -88,11 +88,11 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		//気圧
 		'pressure' => $this->weather['pressure_mb'] . ' hPa',
 	    );
-	    /*
+	    
 	    ob_start();
-	    setcookie('weather', serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
+	    setcookie('weather_' . HASH, serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
 	    ob_end_clean();
-	     */
+	    
 	    return $weather;
 	}
 }
