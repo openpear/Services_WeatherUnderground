@@ -16,4 +16,5 @@ define('WG_API_AP', 'http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/ind
 define('MPH_MS', 0.44704);
 define('CACHE_DIR', 'tmp/');
 define('LIFE_TIME', 1800);
+define('HASH', sha1($_SERVER['HTTP_HOST']));
 ?>
