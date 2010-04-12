@@ -48,8 +48,8 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    }
 	    
 	    
-	    if($_COOKIE['weather'] . '_' . HASH){
-		return unserialize($_COOKIE['weather'] . '_' . HASH);
+	    if($_COOKIE['weather_' . HASH]){
+		return unserialize($_COOKIE['weather_' . HASH]);
 	    }
 	    
 

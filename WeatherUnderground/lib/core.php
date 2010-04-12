@@ -80,8 +80,8 @@ abstract class WeatherUndergroundCore {
 	 * 天気アイコンをキャッシュしてから返す
 	 *
 	 * @return string
+	 * 一時的に使い方変更・・・
 	 */
-	/*一時的にストップ
 	protected function weatherIcon(){
 	    //パーツでの利用を前提とした天気アイコンキャッシュ
 	    if(!is_file('weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name'])){
@@ -92,7 +92,6 @@ abstract class WeatherUndergroundCore {
 	    file_put_contents('weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name'], file_get_contents($this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name']));
 	    return is_file('weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name']) ? 'weather_img/' . $this->weather['icon'] . $this->weather['icon_url_name'] : $this->weather['icon_url_base'] . $this->weather['icon'] . $this->weather['icon_url_name'] ;
 	}
-	 */
 
 	/**
 	 * 風向を日本語に変換
