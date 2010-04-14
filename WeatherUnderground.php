@@ -10,9 +10,6 @@
 
 require_once dirname(__FILE__) . '/WeatherUnderground/lib/core.php';
 
-//恐らくディレクトリが変わってしまうのでこの設定だけここに
-define('CACHE_BASE_DIR', dirname(__FILE__) . '/WeatherUnderground/' . CACHE_DIR);
-
 class Services_WeatherUnderground extends WeatherUndergroundCore implements WeatherUnderground {
 
 	/**
@@ -47,11 +44,9 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 		return CITY_NOT_FOUND;
 	    }
 	    
-	    /*ちょっと吟味
-	    if($_COOKIE['weather_' . HASH]){
-		return unserialize($_COOKIE['weather_' . HASH]);
+	    if($_COOKIE['weather_' . $this->weather['station_id']]){
+		return unserialize($_COOKIE['weather_' . $this->weather['station_id']]);
 	    }
-	     */
 	    
 
 	    $di = $this->di();
@@ -91,7 +86,7 @@ class Services_WeatherUnderground extends WeatherUndergroundCore implements Weat
 	    );
 	    
 	    ob_start();
-	    setcookie('weather_' . HASH, serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
+	    setcookie('weather_' . $this->weather['station_id'], serialize($weather), $_SERVER['REQUEST_TIME'] + 1800);
 	    ob_end_clean();
 	    
 	    return $weather;
