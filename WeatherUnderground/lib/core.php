@@ -8,10 +8,10 @@
  *
  */
 
-require_once '../WeatherUnderground/lib/interface.php';
-require_once '../WeatherUnderground/lib/settings.php';
-require_once '../WeatherUnderground/lib/error.php';
-require_once '../WeatherUnderground/lib/cache.php';
+require_once dirname(__FILE__) . '/interface.php';
+require_once dirname(__FILE__) . '/settings.php';
+require_once dirname(__FILE__) . '/error.php';
+require_once dirname(__FILE__) . '/cache.php';
 
 abstract class WeatherUndergroundCore {
 
@@ -46,7 +46,7 @@ abstract class WeatherUndergroundCore {
 	    $client = new HTTP_Client();
 	    $client->get($this->makeUrl($query));
 	    $response = $client->currentResponse();
-	    $this->cache->cacheSet(mb_convert_encoding($response['body'], 'UTF-8', 'auto'), $id);
+	    $this->cache->cacheSet(mb_convert_encoding($response['body'], 'UTF-8', 'auto'), $query);
 	    $data = $response['body'];
 	    unset($query);
 	    unset($response);
@@ -80,6 +80,7 @@ abstract class WeatherUndergroundCore {
 	 * 天気アイコンをキャッシュしてから返す
 	 *
 	 * @return string
+	 * 一時的に使い方変更・・・
 	 */
 	protected function weatherIcon(){
 	    //パーツでの利用を前提とした天気アイコンキャッシュ
