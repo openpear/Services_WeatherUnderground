@@ -1,0 +1,32 @@
+現在の詳細な気象情報を提供してくれる
+*WeatherUnderground
+[http://nihongo.wunderground.com]
+のAPIを簡単に使えるようにするパッケージ
+
+
+使い方
+$wg = new Services_WeatherUnderground('都市名');
+$weather = $wg->getWeatherData();
+
+必要最低限の天気観測データが欲しい場合は
+getWeatherDataメソッド
+APIが提供する全てのデータが欲しい場合は
+getRawWeatherDataメソッド
+を各々わけてお使い下さい。
+
+
+返されるデータは配列で、各々
+city = 街
+country = 国名
+image = 天気アイコン(画像)
+observation_location = 観測地
+observation_time = 観測時間(JST 西暦4桁)
+temp = 摂氏
+humidity = 湿度
+wind_dir = 風向き
+wind_speed = 風速
+pressure = 気圧
+
+
+詳細はサンプルをご覧下さい。
+尚、観測間隔はおよそ1時間です。
